@@ -1,3 +1,9 @@
+# Aidan McCoy
+# start 10/3/2023
+# DUE: 10/9/2023
+# DESCRIPTION: the point of this project is to code in a "file checking" logic that will search for files in a designated directory and 
+# check if they are the correct files in direcotry and also check if an incorrect file name was given. 
+
 # UOCIS322 - Project 1 #
 
 This project will get you started with creating a simple webpage server.
