@@ -97,18 +97,18 @@ def respond(sock):
     docroot = options.DOCROOT
 
     if len(parts) > 1 and parts[0] == "GET":
-        requested_file = parts[1]
+        file_request = parts[1]
 
     else:
         log.info("Unhandled request: {}".format(request))
         transmit(STATUS_NOT_IMPLEMENTED, sock)
         transmit("\nI don't handle this request: {}\n".format(request), sock)
     
-    if ".." in requested_file or "~" in requested_file:
+    if ".." in file_request or "~" in file_request:
         transmit(STATUS_FORBIDDEN, sock)
-        transmit("\nForbidden: Illegal characters in the requested file path\n", sock)
+        transmit("\nForbidden: Illegal characters have been found in the requested file path. Please enter a valid file path\n", sock)
 
-    full_file_path = docroot + requested_file
+    full_file_path = docroot + file_request
 
     try:
         with open(full_file_path, 'r') as file:
@@ -117,35 +117,7 @@ def respond(sock):
             transmit(file_content, sock)
     except FileNotFoundError:
         transmit(STATUS_NOT_FOUND, sock)
-        transmit("\nFile not found: {}\n".format(requested_file), sock)
-
-
-    """
-    requested_file = part[1]
-    if ".." in requested_file or "~" in requested_file:
-        transmit(STATUS_FORBIDDEN, sock)
-        transmit("403 Forbidden\n", sock)
-    else:
-        path = f"{./pages}{requested_file}"
-        
-        try:
-            with open(path, "rb") as file:
-            content = file.read()
-            transmit(STATUS_OK, sock)
-
-            if requested_file.endswith(".css"):
-                transmit(STATUS_OK, sock)
-                transmit("\n200 OK\n", sock)
-            if requested_file.endswith(".html"):
-                transmit(STATUS_OK, sock)
-                transmit("\n200 OK\n", sock)5
-            sock.sendall(content)
-
-        except FileNotFoundError:
-            transmit(STATUS_NOT_FOUND, SOCK)
-            transmit("\n404 Status not found\n",sock)
-            
-    """
+        transmit("\nFile not found: {}\n".format(file_request), sock)
 
     sock.shutdown(socket.SHUT_RDWR)
     sock.close()
