@@ -103,21 +103,27 @@ def respond(sock):
         log.info("Unhandled request: {}".format(request))
         transmit(STATUS_NOT_IMPLEMENTED, sock)
         transmit("\nI don't handle this request: {}\n".format(request), sock)
-    
-    if ".." in file_request or "~" in file_request:
-        transmit(STATUS_FORBIDDEN, sock)
-        transmit("\nForbidden: Illegal characters have been found in the requested file path. Please enter a valid file path\n", sock)
+   
+    if len(parts) > 1 and parts[1] == "/":
+        transmit(STATUS_OK,sock)
+        transmit(CAT, sock)
 
     full_file_path = docroot + file_request
-
+    
     try:
         with open(full_file_path, 'r') as file:
             file_content = file.read()
             transmit(STATUS_OK, sock)
             transmit(file_content, sock)
     except FileNotFoundError:
-        transmit(STATUS_NOT_FOUND, sock)
-        transmit("\nFile not found: {}\n".format(file_request), sock)
+        if ".." in file_request or "~" in file_request:
+            transmit(STATUS_FORBIDDEN, sock)
+            transmit(STATUS_FORBIDDEN, sock)
+            transmit("\nForbidden: Illegal characters have been found in the requested file path.\n", sock)
+        else: 
+            transmit(STATUS_NOT_FOUND, sock)
+            transmit(STATUS_NOT_FOUND, sock)
+            transmit("\nFile not found: {}\n".format(file_request), sock)
 
     sock.shutdown(socket.SHUT_RDWR)
     sock.close()
